@@ -102,8 +102,19 @@ def k2(b,side):
  for i,p in enumerate(b):
   if p==("K"if side else"k"):return i
  return 0
+def Q2(b,side,d,a,z):
+ v=e2(b)
+ if d<=0:return v
+ if v>=z:return v
+ if v>a:a=v
+ for i,j,n in L2(b,side):
+  if b[j]=="."and b[i].lower()!="p":continue
+  v=-Q2(n,not side,d-1,-z,-a)
+  if v>a:a=v
+  if a>=z:break
+ return a
 def S2(b,side,d,a,z):
- if d==0:return e2(b)
+ if d==0:return Q2(b,side,2,a,z)
  m=L2(b,side)
  if not m:return -9999 if A2(b,k2(b,side),not side)else 0
  m.sort(key=lambda x:-abs(V.get(b[x[1]].lower(),0)))
