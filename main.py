@@ -3,9 +3,10 @@ E=os.environ["MAKEFUN_ENV_URL"]
 P=".1pnbrqk4PNBRQK"
 V={"p":100,"n":320,"b":330,"r":500,"q":900,"k":0}
 C=[0,1,2,3,4,5,6,7]
+N=[0]
 def q(path,body):
  r=U.Request(E+path,json.dumps(body).encode(),{"Content-Type":"application/json"})
- return json.load(U.urlopen(r,timeout=9))
+ return json.load(U.urlopen(r,timeout=60))
 def s2(f,r):return r*8+f
 def F2(s):
  b=["."]*64;r=7;f=0
@@ -25,10 +26,10 @@ def A2(b,s,by):
    if not by and i//8-s//8==1 and d==1:return 1
   elif t=="n":
    if (d,e)in((1,2),(2,1)):return 1
-  elif t in"kq":
-   if max(d,e)==1 or (t=="q" and (d==0 or e==0 or d==e)):return 1
-  elif t in"rb":
-   if t=="r"and(d==0 or e==0)or t=="b"and d==e:
+  elif t=="k":
+   if max(d,e)==1:return 1
+  elif t in"rbq":
+   if t=="r"and(d==0 or e==0)or t=="b"and d==e or t=="q"and(d==0 or e==0 or d==e):
     if c2(b,i,s):return 1
  return 0
 def c2(b,a,z):
@@ -81,9 +82,6 @@ def M2(b,side):
    if b[j]!="."and b[j].isupper()==side:continue
    n=b[:];n[j]=n[i];n[i]="."
    if t=="p"and j//8 in(0,7):n[j]="Q"if side else"q"
-   if t=="k"and abs(j%8-i%8)>1:
-    if j%8>i%8:n[i+3]=n[i+1];n[i+1]="."
-    else:n[i-4]=n[i-1];n[i-1]="."
    out.append((i,j,n))
  return out
 def u2(i,j):
@@ -93,7 +91,10 @@ def e2(b):
  v=0
  for i,p in enumerate(b):
   if p==".":continue
-  x=V[p.lower()];d=3.5-abs(i%8-3.5)/2-abs(i//8-3.5)/2
+  t=p.lower();x=V[t];d=3.5-abs(i%8-3.5)/2-abs(i//8-3.5)/2
+  w=int("454223"["pnbrqk".index(t)])
+  if t=="k":w=-w
+  d*=w
   v+=x+d if p.isupper()else-(x+d)
  return v
 def L2(b,side):
@@ -104,17 +105,20 @@ def k2(b,side):
  return 0
 def Q2(b,side,d,a,z):
  v=e2(b)
- if d<=0:return v
+ v=v if side else-v
+ N[0]+=1
+ if d<=0 or N[0]>26000:return v
  if v>=z:return v
  if v>a:a=v
  for i,j,n in L2(b,side):
-  if b[j]=="."and b[i].lower()!="p":continue
+  if b[j]==".":continue
   v=-Q2(n,not side,d-1,-z,-a)
   if v>a:a=v
   if a>=z:break
  return a
 def S2(b,side,d,a,z):
- if d==0:return Q2(b,side,2,a,z)
+ N[0]+=1
+ if d==0 or N[0]>26000:return Q2(b,side,0,a,z)
  m=L2(b,side)
  if not m:return -9999 if A2(b,k2(b,side),not side)else 0
  m.sort(key=lambda x:-abs(V.get(b[x[1]].lower(),0)))
@@ -124,7 +128,7 @@ def S2(b,side,d,a,z):
   if a>=z:break
  return a
 def p2(b,side):
- best=None;bs=-1e9
+ N[0]=0;best=None;bs=-1e9
  for i,j,n in L2(b,side):
   v=-S2(n,not side,2,-1e9,1e9)
   if v>bs:bs=v;best=u2(i,j)
@@ -134,6 +138,8 @@ while 1:
  r=q("/game",{})
  if r.get("status")=="done":break
  if r.get("status")!="your_move":continue
- b,side=F2(r["F2"])
+ b,side=F2(r["fen"])
  m=p2(b,side)
+ L=r["legal_moves"]
+ if m not in L:m=m+"q"if m and m+"q"in L else L[0]
  r=q("/move",{"game":r["game"],"move":m})
