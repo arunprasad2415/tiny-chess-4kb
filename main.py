@@ -1,8 +1,6 @@
 import json,os,urllib.request as U
 E=os.environ["MAKEFUN_ENV_URL"]
-P=".1pnbrqk4PNBRQK"
 V={"p":100,"n":320,"b":330,"r":500,"q":900,"k":0}
-C=[0,1,2,3,4,5,6,7]
 N=[0]
 def q(path,body):
  r=U.Request(E+path,json.dumps(body).encode(),{"Content-Type":"application/json"})
@@ -107,31 +105,36 @@ def Q2(b,side,d,a,z):
  v=e2(b)
  v=v if side else-v
  N[0]+=1
- if d<=0 or N[0]>26000:return v
+ if d<=0 or N[0]>60000:return v
  if v>=z:return v
  if v>a:a=v
- for i,j,n in L2(b,side):
+ for i,j,n in M2(b,side):
   if b[j]==".":continue
+  if b[j].lower()=="k":return 9999
   v=-Q2(n,not side,d-1,-z,-a)
   if v>a:a=v
   if a>=z:break
  return a
 def S2(b,side,d,a,z):
  N[0]+=1
- if N[0]>26000:return Q2(b,side,0,a,z)
+ if N[0]>60000:return Q2(b,side,0,a,z)
  if d==0:return Q2(b,side,1,a,z)
- m=L2(b,side)
+ m=M2(b,side)
  if not m:return -9999 if A2(b,k2(b,side),not side)else 0
  m.sort(key=lambda x:-abs(V.get(b[x[1]].lower(),0)))
  for i,j,n in m:
+  if b[j].lower()=="k":return 9999
   v=-S2(n,not side,d-1,-z,-a)
   if v>a:a=v
   if a>=z:break
  return a
 def p2(b,side):
  N[0]=0;best=None;bs=-1e9
- for i,j,n in L2(b,side):
-  v=-S2(n,not side,2,-1e9,1e9)
+ m=L2(b,side)
+ m.sort(key=lambda x:-abs(V.get(b[x[1]].lower(),0)))
+ for i,j,n in m:
+  if N[0]>60000:break
+  v=-S2(n,not side,3,-1e9,-bs)
   if v>bs:bs=v;best=u2(i,j)
  return best
 g=0
