@@ -1,4 +1,3 @@
-# tiny-chess-01 make.fun entry: negamax two plies, capture quiescence, deterministic  --
 import json,os,urllib.request as U
 E=os.environ["MAKEFUN_ENV_URL"]
 P=".1pnbrqk4PNBRQK"
