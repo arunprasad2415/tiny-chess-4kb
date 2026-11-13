@@ -118,7 +118,8 @@ def Q2(b,side,d,a,z):
  return a
 def S2(b,side,d,a,z):
  N[0]+=1
- if d==0 or N[0]>26000:return Q2(b,side,0,a,z)
+ if N[0]>26000:return Q2(b,side,0,a,z)
+ if d==0:return Q2(b,side,1,a,z)
  m=L2(b,side)
  if not m:return -9999 if A2(b,k2(b,side),not side)else 0
  m.sort(key=lambda x:-abs(V.get(b[x[1]].lower(),0)))
